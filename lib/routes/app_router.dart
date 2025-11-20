@@ -9,14 +9,28 @@ class ApiObserver extends NavigatorObserver {
   ApiObserver(this.api);
 
   final MockApi api;
+  DateTime? _lastFetchedAt;
+  bool _isFetching = false;
 
-  Future<void> _fetch(
+  bool _shouldFetch() {
+    if (_lastFetchedAt == null) return true;
+    final elapsed = DateTime.now().difference(_lastFetchedAt!);
+    return elapsed >= const Duration(minutes: 1);
+  }
+
+  Future<void> _maybeFetch(
     String event,
     Route<dynamic>? route,
     Route<dynamic>? previous,
   ) async {
+    if (_isFetching || !_shouldFetch()) return;
+    _isFetching = true;
     try {
       final data = await api.fetchDummyData();
+      _lastFetchedAt = DateTime.now();
+      debugPrint(
+        '[GoRouter:$event] モックAPI取得時刻を更新: ${_lastFetchedAt!.toIso8601String()}',
+      );
       final routeLabel = route?.settings.name ?? route?.runtimeType.toString();
       final prevLabel =
           previous?.settings.name ?? previous?.runtimeType.toString();
@@ -25,19 +39,21 @@ class ApiObserver extends NavigatorObserver {
       );
     } catch (e, st) {
       debugPrint('[GoRouter:$event] fetch failed: $e\n$st');
+    } finally {
+      _isFetching = false;
     }
   }
 
   @override
   void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
     super.didPush(route, previousRoute);
-    unawaited(_fetch('push', route, previousRoute));
+    unawaited(_maybeFetch('push', route, previousRoute));
   }
 
   @override
   void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
     super.didPop(route, previousRoute);
-    unawaited(_fetch('pop', previousRoute, route));
+    unawaited(_maybeFetch('pop', previousRoute, route));
   }
 }
 
