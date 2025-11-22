@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../providers/fetch_flag_provider.dart';
 import '../services/mock_api.dart';
 
-class HomePage extends StatefulWidget {
+class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  ConsumerState<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends ConsumerState<HomePage> {
   final MockApi _api = MockApi();
   bool _loading = false;
   String? _lastResponse;
@@ -24,12 +26,14 @@ class _HomePageState extends State<HomePage> {
       setState(() {
         _lastResponse = data.toString();
       });
+      ref.read(fetchFlagProvider.notifier).setSuccess();
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('モックJSONを取得しました')),
         );
       }
     } catch (e) {
+      ref.read(fetchFlagProvider.notifier).setFailure();
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('取得に失敗しました: $e')),
@@ -46,6 +50,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final fetched = ref.watch(fetchFlagProvider);
     return Scaffold(
       appBar: AppBar(
         title: const Text('メイン画面'),
@@ -77,6 +82,8 @@ class _HomePageState extends State<HomePage> {
                   : const Icon(Icons.cloud_download),
               label: Text(_loading ? '取得中...' : 'モックJSONを取得'),
             ),
+            const SizedBox(height: 8),
+            Text('取得フラグ: ${fetched ? 'TRUE' : 'FALSE'}'),
             if (_lastResponse != null) ...[
               const SizedBox(height: 12),
               Text(
