@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import '../pages/detail_page.dart';
 import '../pages/home_page.dart';
+import '../pages/modal_page.dart';
 import '../services/mock_api.dart';
 
 class ApiObserver extends NavigatorObserver {
@@ -69,6 +70,14 @@ final GoRouter appRouter = GoRouter(
           path: 'detail',
           name: 'detail',
           builder: (context, state) => const DetailPage(),
+        ),
+        GoRoute(
+          path: 'modal',
+          name: 'modal',
+          pageBuilder: (context, state) => MaterialPage(
+            fullscreenDialog: true,
+            child: const ModalPage(),
+          ),
         ),
       ],
     ),

@@ -60,6 +60,11 @@ class _HomePageState extends State<HomePage> {
               onPressed: () => context.go('/detail'),
               child: const Text('詳細へ移動'),
             ),
+            const SizedBox(height: 12),
+            ElevatedButton(
+              onPressed: () => context.push('/modal'),
+              child: const Text('モーダルを開く'),
+            ),
             const SizedBox(height: 24),
             ElevatedButton.icon(
               onPressed: _loading ? null : _handleFetch,
