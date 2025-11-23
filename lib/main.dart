@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'providers/app_init_provider.dart';
 import 'providers/app_lifecycle_provider.dart';
 import 'routes/app_router.dart';
 
@@ -14,6 +15,8 @@ class MainApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     // アプリライフサイクル監視を起動（dispose 時に自動解除）
     ref.watch(appLifecycleProvider);
+    // 初期化フェッチを起動
+    ref.watch(appInitProvider);
 
     final router = ref.watch(goRouterProvider);
 

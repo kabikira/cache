@@ -5,6 +5,7 @@ import '../pages/detail_page.dart';
 import '../pages/home_page.dart';
 import '../pages/modal_page.dart';
 import '../pages/tab_example_page.dart';
+import '../providers/app_init_provider.dart';
 import '../providers/fetch_flag_provider.dart';
 import '../managers/fetch_manager.dart';
 import '../widgets/tab_shell.dart';
@@ -52,17 +53,22 @@ final goRouterProvider = Provider<GoRouter>((ref) {
   ref.listen<bool>(fetchFlagProvider, (previous, next) {
     refreshNotifier.refresh();
   });
+  // 初期化フェッチを開始
+  ref.watch(appInitProvider);
 
   return GoRouter(
     navigatorKey: rootNavigatorKey,
     observers: [ApiObserver(fetchManager)],
     refreshListenable: refreshNotifier,
     redirect: (context, state) {
-      fetchManager.onNavigation(
-        event: 'redirect',
-        current: state.uri.toString(),
-        previous: null,
-      );
+      final initDone = ref.read(initCompletedProvider);
+      if (initDone) {
+        fetchManager.onNavigation(
+          event: 'redirect',
+          current: state.uri.toString(),
+          previous: null,
+        );
+      }
 
       final fetched = ref.read(fetchFlagProvider);
       final isModal = state.matchedLocation == '/modal';

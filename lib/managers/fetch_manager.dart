@@ -28,6 +28,12 @@ class FetchManager {
     unawaited(_runFetch(event, current: current, previous: previous));
   }
 
+  /// 初期化フェッチ用（await 可能）
+  Future<void> fetchForInit() async {
+    if (_isFetching || !_shouldFetch()) return;
+    await _runFetch('init', current: 'app_start', previous: null);
+  }
+
   Future<void> _runFetch(
     String event, {
     String? current,
