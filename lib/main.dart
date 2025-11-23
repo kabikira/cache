@@ -15,9 +15,11 @@ class MainApp extends ConsumerWidget {
     // アプリライフサイクル監視を起動（dispose 時に自動解除）
     ref.watch(appLifecycleProvider);
 
+    final router = ref.watch(goRouterProvider);
+
     return MaterialApp.router(
       title: 'GoRouter Demo',
-      routerConfig: appRouter,
+      routerConfig: router,
       theme: ThemeData(
         colorSchemeSeed: Colors.blue,
         brightness: Brightness.light,

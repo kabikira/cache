@@ -1,12 +1,15 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../providers/fetch_flag_provider.dart';
 import '../services/mock_api.dart';
 
 /// 画面遷移やリダイレクトで共通にモックAPIを叩くマネージャ。
 class FetchManager {
-  FetchManager(this.api);
+  FetchManager(this.api, this.ref);
 
   final MockApi api;
+  final Ref ref;
   DateTime? _lastFetchedAt;
   bool _isFetching = false;
 
@@ -34,6 +37,7 @@ class FetchManager {
     try {
       final data = await api.fetchDummyData();
       _lastFetchedAt = DateTime.now();
+      ref.read(fetchFlagProvider.notifier).setSuccess();
       debugPrint(
         '[FetchManager:$event] モックAPI取得時刻を更新: ${_lastFetchedAt!.toIso8601String()}',
       );
@@ -41,9 +45,15 @@ class FetchManager {
         '[FetchManager:$event] current=$current prev=$previous data=$data',
       );
     } catch (e, st) {
+      ref.read(fetchFlagProvider.notifier).setFailure();
       debugPrint('[FetchManager:$event] fetch failed: $e\n$st');
     } finally {
       _isFetching = false;
     }
   }
 }
+
+/// Riverpodで共有するFetchManager
+final fetchManagerProvider = Provider<FetchManager>((ref) {
+  return FetchManager(MockApi(), ref);
+});
