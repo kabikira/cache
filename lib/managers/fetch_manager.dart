@@ -31,6 +31,7 @@ class FetchManager {
   /// 初期化フェッチ用（await 可能）
   Future<void> fetchForInit() async {
     if (_isFetching || !_shouldFetch()) return;
+    debugPrint('[FetchManager:init] アプリ起動時の初期化フェッチを開始します');
     await _runFetch('init', current: 'app_start', previous: null);
   }
 
