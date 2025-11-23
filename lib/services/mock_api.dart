@@ -18,6 +18,9 @@ class MockApi {
     }
     ''';
 
+    // const mockJson2 = '''
+    // ''';
+
     return jsonDecode(mockJson) as Map<String, dynamic>;
   }
 }
