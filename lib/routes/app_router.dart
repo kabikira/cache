@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import '../pages/detail_page.dart';
 import '../pages/home_page.dart';
 import '../pages/modal_page.dart';
+import '../pages/tab_example_page.dart';
 import '../services/mock_api.dart';
+import '../widgets/tab_shell.dart';
 
 class ApiObserver extends NavigatorObserver {
   ApiObserver(this.api);
@@ -61,23 +63,42 @@ class ApiObserver extends NavigatorObserver {
 final GoRouter appRouter = GoRouter(
   observers: [ApiObserver(MockApi())],
   routes: [
-    GoRoute(
-      path: '/',
-      name: 'home',
-      builder: (context, state) => const HomePage(),
-      routes: [
-        GoRoute(
-          path: 'detail',
-          name: 'detail',
-          builder: (context, state) => const DetailPage(),
+    StatefulShellRoute.indexedStack(
+      builder: (context, state, navigationShell) =>
+          TabShell(navigationShell: navigationShell),
+      branches: [
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: '/',
+              name: 'home',
+              builder: (context, state) => const HomePage(),
+              routes: [
+                GoRoute(
+                  path: 'detail',
+                  name: 'detail',
+                  builder: (context, state) => const DetailPage(),
+                ),
+                GoRoute(
+                  path: 'modal',
+                  name: 'modal',
+                  pageBuilder: (context, state) => MaterialPage(
+                    fullscreenDialog: true,
+                    child: const ModalPage(),
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
-        GoRoute(
-          path: 'modal',
-          name: 'modal',
-          pageBuilder: (context, state) => MaterialPage(
-            fullscreenDialog: true,
-            child: const ModalPage(),
-          ),
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: '/tabs',
+              name: 'tabs',
+              builder: (context, state) => const TabExamplePage(),
+            ),
+          ],
         ),
       ],
     ),
