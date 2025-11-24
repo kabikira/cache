@@ -1,0 +1,33 @@
+{
+  // VS Codeでフレーバーを切り替えて起動できる設定。Dart/Flutter拡張が利用します。
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Flutter (dev)",
+      "request": "launch",
+      "type": "dart",
+      "args": [
+        "--dart-define",
+        "APP_FLAVOR=dev"
+      ]
+    },
+    {
+      "name": "Flutter (test)",
+      "request": "launch",
+      "type": "dart",
+      "args": [
+        "--dart-define",
+        "APP_FLAVOR=test"
+      ]
+    },
+    {
+      "name": "Flutter (prod)",
+      "request": "launch",
+      "type": "dart",
+      "args": [
+        "--dart-define",
+        "APP_FLAVOR=prod"
+      ]
+    }
+  ]
+}

@@ -9,6 +9,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_native_splash: ^2.4.7
   flutter_riverpod: ^3.0.3
   go_router: ^17.0.0
 
@@ -19,3 +20,12 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+flutter_native_splash:
+  color: "#0D47A1"
+  image: assets/images/splash_logo.png
+  # 最小限の出力に寄せるため、Web は生成しない
+  web: false
+  # Android/iOS のみ対応（必要なら android_12 ブロックを再追加）
+  android: true
+  ios: true

@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'providers/app_init_provider.dart';
 import 'providers/app_lifecycle_provider.dart';
 import 'routes/app_router.dart';
+import 'widgets/startup_gate.dart';
 
 void main() {
+  final widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   runApp(const ProviderScope(child: MainApp()));
 }
 
@@ -20,12 +24,14 @@ class MainApp extends ConsumerWidget {
 
     final router = ref.watch(goRouterProvider);
 
-    return MaterialApp.router(
-      title: 'GoRouter Demo',
-      routerConfig: router,
-      theme: ThemeData(
-        colorSchemeSeed: Colors.blue,
-        brightness: Brightness.light,
+    return StartupGate(
+      child: MaterialApp.router(
+        title: 'GoRouter Demo',
+        routerConfig: router,
+        theme: ThemeData(
+          colorSchemeSeed: Colors.blue,
+          brightness: Brightness.light,
+        ),
       ),
     );
   }
